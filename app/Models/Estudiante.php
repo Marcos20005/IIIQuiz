@@ -1,0 +1,36 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Estudiante extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'carne',
+        'nombre',
+        'apellidos',
+        'consejero_id',
+    ];
+
+    public function consejero()
+    {
+        return $this->belongsTo(Docente::class, 'consejero_id');
+    }
+
+    public function matriculas()
+    {
+        return $this->hasMany(EstudianteMatriculado::class, 'estudiante_id');
+    }
+
+    public function grupos()
+    {
+        return $this->belongsToMany(Grupo::class, 'estudiante_matriculados', 'estudiante_id', 'grupo_id')
+                    ->using(EstudianteMatriculado::class)
+                    ->withPivot('nota')
+                    ->withTimestamps();
+    }
+}
